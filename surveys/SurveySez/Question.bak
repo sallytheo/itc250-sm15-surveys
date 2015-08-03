@@ -1,0 +1,21 @@
+<?php
+//Question.php
+namespace SurveySez;
+
+class Question{
+	public $Question = '';
+	public $Descripion = '';
+	public $QuestionID = 0;
+	
+	public function __construct($Question,$Descripion, $QuestionID){
+		
+		
+		
+		$this->Question = $Question;
+		$this->Descripion = $Descripion;
+		$this->QuestionID = (int)$QuestionID;
+		
+		
+	} // end constructor
+		
+}// end question class

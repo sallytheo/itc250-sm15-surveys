@@ -1,0 +1,67 @@
+<?php 
+//Survey.php
+namespace SurveySez;
+
+
+class Survey{
+	public $Title = '';
+	public $Description = '';
+	public $SurveyID = 0;
+	public $aQuestions = array();
+	
+	public function __construct($id){
+			# SQL statement - PREFIX is optional way to distinguish your app
+			$sql = "SELECT Title, Description, SurveyID FROM " . PREFIX . "surveys WHERE SurveyID=$id";
+			
+			//forced integer cast - prevents sql injection
+			$id = (int)$id;
+		
+			#IDB::conn() creates a shareable database connection via a singleton class
+			$result = mysqli_query(\IDB::conn(),$sql) or die(trigger_error(mysqli_error(\IDB::conn()), E_USER_ERROR));
+			
+			if(mysqli_num_rows($result) > 0)
+			{#there are records - present data
+				while($row = mysqli_fetch_assoc($result))
+				{# pull data from associative array
+				$this->Title = dbOut($row['Title']);
+				$this->Description = dbOut($row['Description']);
+				$this->SurveyID = (int)$row['SurveyID'];
+				
+				}
+			}
+			@mysqli_free_result($result);
+			
+			
+			/*
+			select q.QuestionID, q.Question from sm15_questions q inner join sm15_surveys s on s.SurveyID = q.SurveyID where s.SurveyID = 1
+			*/
+			# SQL statement - PREFIX is optional way to distinguish your app
+			$sql = "select q.QuestionID, q.Question, q.Description from sm15_questions q inner join sm15_surveys s on s.SurveyID = q.SurveyID where s.SurveyID = 1";
+					
+		
+			#IDB::conn() creates a shareable database connection via a singleton class
+			$result = mysqli_query(\IDB::conn(),$sql) or die(trigger_error(mysqli_error(\IDB::conn()), E_USER_ERROR));
+			
+			if(mysqli_num_rows($result) > 0)
+			{#there are records - present data
+				while($row = mysqli_fetch_assoc($result))
+				{# pull data from associative array
+				
+				$this->aQuestions[] = new Question(dbOut($row['Question']),dbOut($row['Description']), (int)$row['QuestionID']);
+				
+				//$this->Title = dbOut($row['Title']);
+				//$this->Description = dbOut($row['Description']);
+				//$this->SurveyID = (int)$row['SurveyID'];
+				
+				}
+			}
+			@mysqli_free_result($result);
+			
+			
+			
+			
+			
+			
+	}// end function __construct
+	
+}// end class survey
